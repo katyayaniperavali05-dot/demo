@@ -1,7 +1,7 @@
 # Copy this file to terraform.tfvars and replace the placeholder values.
 
-admin_object_id = "00000000-0000-0000-0000-000000000000"
-developer_object_id = "00000000-0000-0000-0000-000000000000"
+admin_object_id = "7698a772-787b-4ac8-901f-60d6b08affd2"
+developer_object_id = "5d6b6bb7-de71-4623-b4af-96380a352509"
 
 # Optional overrides (defaults exist in main.tf)
 # resource_group_name = "demo-infra-rg"

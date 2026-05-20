@@ -82,7 +82,6 @@ resource "random_uuid" "developer_role_id" {}
 resource "azurerm_role_definition" "infra_admin" {
   name        = random_uuid.admin_role_id.result
   scope       = azurerm_resource_group.infra.id
-  role_name   = "Infrastructure Admin"
   description = "Custom Azure RBAC role for infrastructure administrators."
 
   permissions {
@@ -96,7 +95,6 @@ resource "azurerm_role_definition" "infra_admin" {
 resource "azurerm_role_definition" "infra_developer" {
   name        = random_uuid.developer_role_id.result
   scope       = azurerm_resource_group.infra.id
-  role_name   = "Infrastructure Developer"
   description = "Custom Azure RBAC role for infrastructure developers."
 
   permissions {
