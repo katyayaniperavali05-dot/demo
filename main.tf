@@ -76,53 +76,18 @@ resource "random_id" "sa_suffix" {
   byte_length = 4
 }
 
-resource "random_uuid" "admin_role_id" {}
-resource "random_uuid" "developer_role_id" {}
-
-resource "azurerm_role_definition" "infra_admin" {
-  name        = random_uuid.admin_role_id.result
-  scope       = azurerm_resource_group.infra.id
-  description = "Custom Azure RBAC role for infrastructure administrators."
-
-  permissions {
-    actions     = ["*"]
-    not_actions = []
-  }
-
-  assignable_scopes = [azurerm_resource_group.infra.id]
-}
-
-resource "azurerm_role_definition" "infra_developer" {
-  name        = random_uuid.developer_role_id.result
-  scope       = azurerm_resource_group.infra.id
-  description = "Custom Azure RBAC role for infrastructure developers."
-
-  permissions {
-    actions = [
-      "Microsoft.Compute/*",
-      "Microsoft.Network/*",
-      "Microsoft.Storage/*",
-      "Microsoft.Resources/subscriptions/resourceGroups/read",
-      "Microsoft.Authorization/roleAssignments/read"
-    ]
-    not_actions = []
-  }
-
-  assignable_scopes = [azurerm_resource_group.infra.id]
-}
-
 resource "azurerm_role_assignment" "admin_assignment" {
-  scope              = azurerm_resource_group.infra.id
-  role_definition_id = azurerm_role_definition.infra_admin.role_definition_resource_id
-  principal_id       = var.admin_object_id
-  principal_type     = "User"
+  scope                = azurerm_resource_group.infra.id
+  role_definition_name = "Owner"
+  principal_id         = var.admin_object_id
+  principal_type       = "User"
 }
 
 resource "azurerm_role_assignment" "developer_assignment" {
-  scope              = azurerm_resource_group.infra.id
-  role_definition_id = azurerm_role_definition.infra_developer.role_definition_resource_id
-  principal_id       = var.developer_object_id
-  principal_type     = "User"
+  scope                = azurerm_resource_group.infra.id
+  role_definition_name = "Contributor"
+  principal_id         = var.developer_object_id
+  principal_type       = "User"
 }
 
 output "resource_group_name" {
@@ -133,16 +98,6 @@ output "resource_group_name" {
 output "resource_group_id" {
   description = "ID of the Azure resource group created for the infrastructure."
   value       = azurerm_resource_group.infra.id
-}
-
-output "admin_role_definition_id" {
-  description = "ID of the custom Infrastructure Admin role definition."
-  value       = azurerm_role_definition.infra_admin.id
-}
-
-output "developer_role_definition_id" {
-  description = "ID of the custom Infrastructure Developer role definition."
-  value       = azurerm_role_definition.infra_developer.id
 }
 
 output "admin_role_assignment_id" {
