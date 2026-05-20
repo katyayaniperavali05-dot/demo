@@ -1,0 +1,55 @@
+name: Terraform Azure RBAC
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+
+      - name: Create Terraform variables file
+        run: |
+          cat > terraform.tfvars <<EOF
+          admin_object_id = "${{ secrets.ADMIN_OBJECT_ID }}"
+          developer_object_id = "${{ secrets.DEVELOPER_OBJECT_ID }}"
+          EOF
+          if [ -n "${{ secrets.RESOURCE_GROUP_NAME }}" ]; then
+            echo "resource_group_name = \"${{ secrets.RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
+          fi
+          if [ -n "${{ secrets.LOCATION }}" ]; then
+            echo "location = \"${{ secrets.LOCATION }}\"" >> terraform.tfvars
+          fi
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate -var-file=terraform.tfvars
+
+      - name: Terraform Plan
+        run: terraform plan -var-file=terraform.tfvars -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
+
+      - name: Cleanup generated Terraform variables
+        run: |
+          rm -f terraform.tfvars tfplan

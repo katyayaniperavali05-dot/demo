@@ -1,0 +1,10 @@
+# Copy this file to terraform.tfvars and replace the placeholder values.
+
+admin_object_id = "00000000-0000-0000-0000-000000000000"
+developer_object_id = "00000000-0000-0000-0000-000000000000"
+
+# Optional overrides (defaults exist in main.tf)
+# resource_group_name = "demo-infra-rg"
+# location = "eastus"
+# If you want to configure these via GitHub Actions, add secrets:
+# RESOURCE_GROUP_NAME and LOCATION
